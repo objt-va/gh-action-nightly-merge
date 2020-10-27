@@ -4,7 +4,7 @@ set -e
 
 echo
 echo "  'Nightly Merge Action' is using the following input:"
-echo "    - source_branch = '$INPUT_SOURCE_BRANCH'"
+echo "    - source_branch = '$GITHUB_REF_NAME'"
 echo "    - target_branch = '$INPUT_TARGET_BRANCH'"
 echo "    - allow_ff = $INPUT_ALLOW_FF"
 echo "    - allow_git_lfs = $INPUT_GIT_LFS"
@@ -45,26 +45,26 @@ git config --global user.email "$INPUT_USER_EMAIL"
 
 set -o xtrace
 
-git fetch origin $INPUT_SOURCE_BRANCH
-git checkout -b $INPUT_SOURCE_BRANCH origin/$INPUT_SOURCE_BRANCH
+git fetch origin $GITHUB_REF_NAME
+git checkout -b $GITHUB_REF_NAME origin/$GITHUB_REF_NAME
 
 git fetch origin $INPUT_TARGET_BRANCH
 git checkout -b $INPUT_TARGET_BRANCH origin/$INPUT_TARGET_BRANCH
 
-if git merge-base --is-ancestor $INPUT_SOURCE_BRANCH $INPUT_TARGET_BRANCH; then
+if git merge-base --is-ancestor $GITHUB_REF_NAME $INPUT_TARGET_BRANCH; then
   echo "No merge is necessary"
   exit 0
 fi;
 
 set +o xtrace
 echo
-echo "  'Merge Action' is trying to merge the '$INPUT_SOURCE_BRANCH' branch ($(git log -1 --pretty=%H $INPUT_SOURCE_BRANCH))"
+echo "  'Merge Action' is trying to merge the '$GITHUB_REF_NAME' branch ($(git log -1 --pretty=%H $GITHUB_REF_NAME))"
 echo "  into the '$INPUT_TARGET_BRANCH' branch ($(git log -1 --pretty=%H $INPUT_TARGET_BRANCH))"
 echo
 set -o xtrace
 
 # Do the merge
-git merge $FF_MODE --no-edit $INPUT_SOURCE_BRANCH
+git merge $FF_MODE --no-edit $GITHUB_REF_NAME
 
 # Pull lfs if enabled
 if [[ $INPUT_GIT_LFS == "true" ]]; then
