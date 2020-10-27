@@ -39,14 +39,10 @@ if [[ "$INPUT_ALLOW_FF" == "true" ]]; then
   fi
 fi
 
-git remote set-url origin https://x-access-token:${!INPUT_PUSH_TOKEN}@github.com/$GITHUB_REPOSITORY.git
 git config --global user.name "$INPUT_USER_NAME"
 git config --global user.email "$INPUT_USER_EMAIL"
 
 set -o xtrace
-
-git fetch origin $GITHUB_REF_NAME
-git checkout -b $GITHUB_REF_NAME origin/$GITHUB_REF_NAME
 
 git fetch origin $INPUT_TARGET_BRANCH
 git checkout -b $INPUT_TARGET_BRANCH origin/$INPUT_TARGET_BRANCH
